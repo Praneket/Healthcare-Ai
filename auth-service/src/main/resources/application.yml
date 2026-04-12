@@ -1,0 +1,19 @@
+server:
+  port: ${PORT:8081}
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/healthcare_db}
+    username: ${SPRING_DATASOURCE_USERNAME:healthcare}
+    password: ${SPRING_DATASOURCE_PASSWORD:healthcare123}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-change-in-production}
+  expiration: 86400000  # 24 hours in ms

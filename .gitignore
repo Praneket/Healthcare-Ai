@@ -1,0 +1,25 @@
+# Environment secrets — never commit these
+.env
+**/.env
+
+# Java build output
+**/target/
+**/*.class
+
+# Python cache
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Node
+**/node_modules/
+**/build/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

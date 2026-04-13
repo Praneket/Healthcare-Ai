@@ -37,7 +37,14 @@ export default function App() {
         <Toaster
           position="top-right"
           toastOptions={{
-            style: { background: '#1e293b', color: '#e2e8f0', border: '1px solid #334155' },
+            style: {
+              background: 'rgba(13,17,23,0.95)',
+              color: '#f1f5f9',
+              border: '1px solid rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(16px)',
+              borderRadius: '12px',
+              fontSize: '0.9rem',
+            },
           }}
         />
         <AppRoutes />

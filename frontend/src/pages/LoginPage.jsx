@@ -26,34 +26,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>⚕️ Healthcare AI</h1>
-        <p style={styles.subtitle}>Sign in to your account</p>
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <input style={styles.input} type="email" placeholder="Email" required
-            value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-          <input style={styles.input} type="password" placeholder="Password" required
-            value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-          <button style={styles.btn} type="submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', padding: '1rem', position: 'relative', overflow: 'hidden' }}>
+      {/* Background orbs */}
+      <div style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)', top: '-100px', left: '-100px', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)', bottom: '-80px', right: '-80px', pointerEvents: 'none' }} />
+
+      <div className="glass fade-up" style={{ width: '100%', maxWidth: '420px', padding: '2.5rem', position: 'relative' }}>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{ width: 56, height: 56, borderRadius: '16px', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', margin: '0 auto 1rem', animation: 'float 3s ease-in-out infinite' }}>⚕</div>
+          <h1 className="gradient-text" style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '0.25rem' }}>MediAI</h1>
+          <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>Sign in to your account</p>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--muted)', marginBottom: '0.4rem', fontWeight: 500 }}>Email</label>
+            <input className="input-field" type="email" placeholder="you@example.com" required
+              value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--muted)', marginBottom: '0.4rem', fontWeight: 500 }}>Password</label>
+            <input className="input-field" type="password" placeholder="••••••••" required
+              value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+          </div>
+          <button className="btn-primary" type="submit" disabled={loading} style={{ marginTop: '0.5rem', padding: '0.85rem', fontSize: '1rem', borderRadius: '12px' }}>
+            {loading ? <span className="spinner" /> : 'Sign In'}
           </button>
         </form>
-        <p style={styles.link}>
-          No account? <Link to="/register" style={{ color: '#38bdf8' }}>Register</Link>
+
+        <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'var(--muted)', fontSize: '0.9rem' }}>
+          No account?{' '}
+          <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Create one →</Link>
         </p>
       </div>
     </div>
   );
 }
-
-const styles = {
-  page: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' },
-  card: { background: '#1e293b', padding: '2.5rem', borderRadius: '1rem', width: '100%', maxWidth: '400px', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' },
-  title: { fontSize: '1.8rem', textAlign: 'center', marginBottom: '0.25rem', color: '#38bdf8' },
-  subtitle: { textAlign: 'center', color: '#94a3b8', marginBottom: '2rem' },
-  form: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  input: { padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: '1rem', outline: 'none' },
-  btn: { padding: '0.75rem', borderRadius: '0.5rem', background: '#0ea5e9', color: '#fff', border: 'none', fontSize: '1rem', cursor: 'pointer', fontWeight: '600' },
-  link: { textAlign: 'center', marginTop: '1.5rem', color: '#94a3b8' },
-};

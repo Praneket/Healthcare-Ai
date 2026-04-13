@@ -20,18 +20,28 @@ spring:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     properties:
       security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
-      sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
-      sasl.jaas.config: >-
-        org.apache.kafka.common.security.plain.PlainLoginModule required
-        username="${KAFKA_SASL_USERNAME:}"
-        password="${KAFKA_SASL_PASSWORD:}";
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
 
 ai:
   service:
     url: ${AI_SERVICE_URL:http://localhost:8085}
 
 cache:
-  ttl-seconds: 3600  # Cache predictions for 1 hour
+  ttl-seconds: 3600
+
+patient:
+  service:
+    url: ${PATIENT_SERVICE_URL:http://localhost:8083}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

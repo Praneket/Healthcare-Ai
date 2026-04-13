@@ -17,3 +17,12 @@ spring:
 jwt:
   secret: ${JWT_SECRET:your-256-bit-secret-key-change-in-production}
   expiration: 86400000  # 24 hours in ms
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

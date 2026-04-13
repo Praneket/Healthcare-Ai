@@ -50,4 +50,20 @@ public class PatientController {
     public ResponseEntity<?> getHistorySummary(@RequestHeader("X-User-Id") String userId) {
         return ResponseEntity.ok(patientRecordService.getHistorySummary(userId));
     }
+
+    // Called directly by diagnosis-service (synchronous fallback alongside Kafka)
+    @PostMapping("/me/history")
+    public ResponseEntity<PatientRecord> addHistory(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestBody DiagnosisHistory entry) {
+        return ResponseEntity.ok(
+            patientRecordService.addDiagnosisHistory(
+                userId,
+                entry.getDiseaseType(),
+                entry.isPositive(),
+                entry.getConfidence(),
+                entry.getFeatures()
+            )
+        );
+    }
 }

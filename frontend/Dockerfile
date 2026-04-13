@@ -1,8 +1,13 @@
 # Build stage
-FROM node:20-alpine AS build
+FROM node:18-alpine AS build
 WORKDIR /app
+
+# Set npm config to avoid I/O errors on low-memory systems
+ENV NODE_OPTIONS=--max_old_space_size=1024
+ENV CI=false
+
 COPY package.json .
-RUN npm install
+RUN npm install --legacy-peer-deps --prefer-offline
 COPY . .
 RUN npm run build
 

@@ -45,10 +45,10 @@ public class ImageDiagnosisService {
                 public String getFilename() { return file.getOriginalFilename(); }
             };
             body.add("file", fileResource);
-            body.add("disease_type", diseaseType);
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-            String aiUrl = aiServiceUrl + "/predict/image";
+            // Pass disease_type as query param — FastAPI reads it from query string
+            String aiUrl = aiServiceUrl + "/predict/image?disease_type=" + diseaseType;
 
             ResponseEntity<Map> aiResponse = restTemplate.exchange(aiUrl, HttpMethod.POST, requestEntity, Map.class);
             Map<?, ?> result = aiResponse.getBody();

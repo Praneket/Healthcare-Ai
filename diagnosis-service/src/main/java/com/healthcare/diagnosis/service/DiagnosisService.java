@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -29,6 +32,9 @@ public class DiagnosisService {
     @Value("${cache.ttl-seconds}")
     private long cacheTtlSeconds;
 
+    @Value("${patient.service.url}")
+    private String patientServiceUrl;
+
     public PredictionResponse predict(String userId, PredictionRequest request) {
         String cacheKey = buildCacheKey(request);
 
@@ -46,7 +52,8 @@ public class DiagnosisService {
 
         // 2. Call Python AI service
         String aiUrl = aiServiceUrl + "/predict/" + request.getDiseaseType();
-        Map<?, ?> aiResponse = restTemplate.postForObject(aiUrl, request.getFeatures(), Map.class);
+        Map<String, Object> aiRequestBody = Map.of("features", request.getFeatures());
+        Map<?, ?> aiResponse = restTemplate.postForObject(aiUrl, aiRequestBody, Map.class);
 
         PredictionResponse response = new PredictionResponse();
         response.setDiseaseType(request.getDiseaseType());
@@ -63,7 +70,10 @@ public class DiagnosisService {
             log.warn("Failed to cache prediction result");
         }
 
-        // 4. Publish Kafka event for notification + patient-records services
+        // 4. Save history directly to patient-records-service (synchronous — instant)
+        saveHistoryDirectly(userId, request, response);
+
+        // 5. Also publish Kafka event for notification service
         DiagnosisEvent event = new DiagnosisEvent();
         event.setUserId(userId);
         event.setDiseaseType(request.getDiseaseType());
@@ -74,6 +84,27 @@ public class DiagnosisService {
         eventProducer.publishDiagnosisResult(event);
 
         return response;
+    }
+
+    private void saveHistoryDirectly(String userId, PredictionRequest request, PredictionResponse response) {
+        try {
+            String url = patientServiceUrl + "/patients/me/history";
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("diseaseType", request.getDiseaseType());
+            body.put("positive", response.isPositive());
+            body.put("confidence", response.getConfidence());
+            body.put("features", request.getFeatures());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-User-Id", userId);
+            headers.set("Content-Type", "application/json");
+
+            restTemplate.postForObject(url, new HttpEntity<>(body, headers), Object.class);
+            log.info("Saved history directly for user {} disease {}", userId, request.getDiseaseType());
+        } catch (Exception e) {
+            log.warn("Direct history save failed (Kafka will retry): {}", e.getMessage());
+        }
     }
 
     private String buildCacheKey(PredictionRequest request) {

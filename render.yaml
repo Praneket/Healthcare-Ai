@@ -1,0 +1,87 @@
+services:
+  # ── AI Service (Python FastAPI) ────────────────────────────────
+  - type: web
+    name: healthcare-ai-service
+    runtime: docker
+    dockerfilePath: ./healthcare-system/ai-service/Dockerfile
+    dockerContext: ./healthcare-system/ai-service
+    envVars:
+      - key: MODELS_DIR
+        value: ./models
+    healthCheckPath: /health
+
+  # ── Auth Service ───────────────────────────────────────────────
+  - type: web
+    name: healthcare-auth-service
+    runtime: docker
+    dockerfilePath: ./healthcare-system/auth-service/Dockerfile
+    dockerContext: ./healthcare-system/auth-service
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+    healthCheckPath: /actuator/health
+
+  # ── Patient Records Service ────────────────────────────────────
+  - type: web
+    name: healthcare-patient-records
+    runtime: docker
+    dockerfilePath: ./healthcare-system/patient-records-service/Dockerfile
+    dockerContext: ./healthcare-system/patient-records-service
+    envVars:
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false
+    healthCheckPath: /actuator/health
+
+  # ── Notification Service ───────────────────────────────────────
+  - type: web
+    name: healthcare-notification
+    runtime: docker
+    dockerfilePath: ./healthcare-system/notification-service/Dockerfile
+    dockerContext: ./healthcare-system/notification-service
+    healthCheckPath: /actuator/health
+
+  # ── Diagnosis Service ──────────────────────────────────────────
+  - type: web
+    name: healthcare-diagnosis
+    runtime: docker
+    dockerfilePath: ./healthcare-system/diagnosis-service/Dockerfile
+    dockerContext: ./healthcare-system/diagnosis-service
+    envVars:
+      - key: SPRING_REDIS_HOST
+        sync: false
+      - key: SPRING_REDIS_PORT
+        value: "6379"
+      - key: SPRING_REDIS_PASSWORD
+        sync: false
+      - key: SPRING_REDIS_SSL
+        value: "true"
+      - key: AI_SERVICE_URL
+        sync: false
+      - key: PATIENT_SERVICE_URL
+        sync: false
+    healthCheckPath: /actuator/health
+
+  # ── API Gateway ────────────────────────────────────────────────
+  - type: web
+    name: healthcare-api-gateway
+    runtime: docker
+    dockerfilePath: ./healthcare-system/api-gateway/Dockerfile
+    dockerContext: ./healthcare-system/api-gateway
+    envVars:
+      - key: AUTH_SERVICE_URL
+        sync: false
+      - key: DIAGNOSIS_SERVICE_URL
+        sync: false
+      - key: PATIENT_SERVICE_URL
+        sync: false
+      - key: NOTIFICATION_SERVICE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+    healthCheckPath: /actuator/health

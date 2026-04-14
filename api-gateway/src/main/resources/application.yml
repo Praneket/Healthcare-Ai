@@ -30,14 +30,6 @@ spring:
             - StripPrefix=1
             - name: JwtAuthFilter
 
-        - id: notification-service
-          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8084}
-          predicates:
-            - Path=/api/notifications/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthFilter
-
       globalcors:
         cors-configurations:
           '[/**]':

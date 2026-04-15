@@ -9,22 +9,14 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:healthcare}
     password: ${SPRING_DATASOURCE_PASSWORD:healthcare123}
     driver-class-name: org.postgresql.Driver
-    hikari:
-      connection-timeout: 30000
-      maximum-pool-size: 5
-      minimum-idle: 1
-      idle-timeout: 300000
-      max-lifetime: 1200000
-      initialization-fail-timeout: -1
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: false
-    open-in-view: false
-  sql:
-    init:
-      continue-on-error: true
-      mode: never
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 jwt:
   secret: ${JWT_SECRET:your-256-bit-secret-key-change-in-production}
@@ -34,17 +26,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health
   endpoint:
     health:
-      show-details: when-authorized
-  health:
-    db:
-      enabled: false
-
-logging:
-  level:
-    com.healthcare.auth: INFO
-    org.springframework.web: INFO
-    org.hibernate: WARN
-    com.zaxxer.hikari: WARN
+      show-details: never

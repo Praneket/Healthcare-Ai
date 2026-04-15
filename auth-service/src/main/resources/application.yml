@@ -15,14 +15,16 @@ spring:
       minimum-idle: 1
       idle-timeout: 300000
       max-lifetime: 1200000
+      initialization-fail-timeout: -1
   jpa:
     hibernate:
-      ddl-auto: ${HIBERNATE_DDL_AUTO:update}
+      ddl-auto: none
     show-sql: false
     open-in-view: false
   sql:
     init:
       continue-on-error: true
+      mode: never
 
 jwt:
   secret: ${JWT_SECRET:your-256-bit-secret-key-change-in-production}
@@ -36,9 +38,13 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  health:
+    db:
+      enabled: false
 
 logging:
   level:
     com.healthcare.auth: INFO
     org.springframework.web: INFO
     org.hibernate: WARN
+    com.zaxxer.hikari: WARN
